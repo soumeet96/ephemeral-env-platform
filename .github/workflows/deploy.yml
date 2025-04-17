@@ -38,9 +38,10 @@ jobs:
 
       - name: Terraform Plan
         run: |
+          BRANCH_NAME=$(echo "${GITHUB_REF##*/}")
           terraform plan \
-            -var="branch_name=${GITHUB_ENV.BRANCH_NAME}" \
-            -var="name=${GITHUB_ENV.BRANCH_NAME}" \
+            -var="branch_name=$BRANCH_NAME" \
+            -var="name=$BRANCH_NAME" \
             -out=tfplan
 
       - name: Terraform Apply
