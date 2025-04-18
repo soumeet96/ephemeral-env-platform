@@ -49,6 +49,8 @@ resource "aws_lambda_function" "state_cleanup" {
     variables = {
       STATE_BUCKET = var.state_bucket
       TTL_HOURS    = var.ttl_hours
+      GITHUB_TOKEN  = var.github_token
+      GITHUB_REPO   = "soumeet96/ephemeral-env-platform"
     }
   }
 

@@ -56,7 +56,7 @@ jobs:
         working-directory: ./terraform
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve -var="github_token=${{ secrets.GITHUBTOKEN }}" tfplan
         working-directory: ./terraform
 
   destroy:

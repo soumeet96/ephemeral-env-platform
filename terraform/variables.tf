@@ -44,3 +44,9 @@ variable "ttl_hours" {
   type        = number
   default     = 6
 }
+
+variable "github_token" {
+  description = "GitHub token for triggering remote destroy"
+  type        = string
+  sensitive   = true
+}

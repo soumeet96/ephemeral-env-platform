@@ -1,12 +1,19 @@
-import boto3
+import json
+import urllib.request
 import os
 from datetime import datetime, timezone, timedelta
+import boto3
+import base64
 
 def lambda_handler(event, context):
     s3 = boto3.client('s3')
     bucket = os.environ['STATE_BUCKET']
     prefix = 'env/'
     ttl_hours = float(os.environ.get('TTL_HOURS', '6'))
+    github_token = os.environ['GITHUB_TOKEN']
+    github_repo = os.environ['GITHUB_REPO']  # e.g., "soumeet96/ephemeral-env"
+    github_owner = os.environ['GITHUB_OWNER']
+    github_branch = os.environ.get('BRANCH_PREFIX', 'feature-update')  # optional fallback
 
     print(f"Checking for expired state files in bucket: {bucket} with TTL: {ttl_hours} hours")
 
@@ -29,9 +36,39 @@ def lambda_handler(event, context):
                     expired.append(key)
                 else:
                     print(f"[ACTIVE] {key} last modified at {last_modified}, age: {age}")
-        
-        print(f"Expired state files: {expired if expired else 'None'}")
-        
+
+        if expired:
+            for key in expired:
+                branch_name = key.split('/')[1]
+                print(f"Triggering destroy for branch: {branch_name}")
+                trigger_destroy_workflow(github_owner, github_repo, github_token, branch_name)
+        else:
+            print("No expired environments to destroy.")
+
     except Exception as e:
         print(f"Error: {e}")
         raise
+
+def trigger_destroy_workflow(owner, repo, token, branch_name):
+    url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/destroy.yml/dispatches"
+    data = {
+        "ref": "main",
+        "inputs": {
+            "branch": branch_name
+        }
+    }
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json",
+        "User-Agent": "LambdaTrigger"
+    }
+
+    request = urllib.request.Request(url, data=json.dumps(data).encode(), headers=headers, method="POST")
+
+    try:
+        with urllib.request.urlopen(request) as response:
+            print(f"Triggered workflow for branch {branch_name}, status: {response.status}")
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode()
+        print(f"Failed to trigger workflow: {e.code}, {error_body}")
