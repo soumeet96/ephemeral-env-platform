@@ -98,9 +98,6 @@ jobs:
       - name: Set branch name from PR
         run: echo "BRANCH_NAME=$(echo "${{ github.head_ref }}")" >> $GITHUB_ENV
 
-      - name: Debug Branch Name
-        run: echo "Destroying resources for branch: $BRANCH_NAME"
-
       - name: Terraform Destroy
         run: |
           BRANCH_NAME=$(echo "${GITHUB_REF##*/}")
