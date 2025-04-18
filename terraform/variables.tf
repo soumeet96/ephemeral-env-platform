@@ -35,3 +35,12 @@ variable "container_image" {}
 variable "destroy_after_secs" {
   default = 86400 # 24 hours in seconds
 }
+
+variable "state_bucket" {
+  type        = string
+}
+
+variable "ttl_hours" {
+  type        = number
+  default     = 6
+}

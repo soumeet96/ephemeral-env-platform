@@ -19,3 +19,7 @@ hosted_zone_id = "Z00614253F6R1L4576VOA"
 domain_name = "soumeet.store"
 
 destroy_after_secs = 86400
+
+state_bucket = "my-tf-backup"
+
+ttl_hours    = 6
