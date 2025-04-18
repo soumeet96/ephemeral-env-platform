@@ -34,7 +34,7 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Set branch name
-        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+        run: echo "BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: |
@@ -81,7 +81,7 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Set branch name for destroy
-        run: echo "BRANCH_NAME=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+        run: echo "BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | tr '/' '-')" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: |
