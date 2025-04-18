@@ -51,6 +51,7 @@ resource "aws_lambda_function" "state_cleanup" {
       TTL_HOURS    = var.ttl_hours
       GITHUB_TOKEN  = var.github_token
       GITHUB_REPO   = "soumeet96/ephemeral-env-platform"
+      GITHUB_OWNER    = "soumeet96"
     }
   }
 
