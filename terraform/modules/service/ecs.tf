@@ -1,5 +1,9 @@
 resource "aws_ecs_cluster" "dev" {
   name = "${var.app_name}-${var.branch_name}-cluster"
+  tags = {
+    Name        = "${var.app_name}-${var.branch_name}-cluster"
+    ttl_expiry  = var.ttl_expiry
+  }
 }
 
 resource "aws_ecs_task_definition" "dev" {

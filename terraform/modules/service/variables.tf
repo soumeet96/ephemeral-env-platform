@@ -21,3 +21,8 @@ variable "vpc_id" {}
 variable "domain_name" {}
 
 variable "hosted_zone_id" {}
+
+variable "ttl_expiry" {
+  description = "Expiration timestamp in ISO8601 format"
+  type        = string
+}
