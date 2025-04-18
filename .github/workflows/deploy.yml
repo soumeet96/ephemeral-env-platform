@@ -42,9 +42,10 @@ jobs:
 
       - name: Terraform Plan
         run: |
+          BRANCH_NAME=$(echo "${GITHUB_REF##*/}")
           terraform plan \
-            -var="branch_name=${{ env.BRANCH_NAME }}" \
-            -var="name=${{ env.BRANCH_NAME }}" \
+            -var="branch_name=$BRANCH_NAME" \
+            -var="name=$BRANCH_NAME" \
             -out=tfplan
         working-directory: ./terraform
 
@@ -83,6 +84,6 @@ jobs:
       - name: Terraform Destroy
         run: |
           terraform destroy -auto-approve \
-            -var="branch_name=${{ env.BRANCH_NAME }}" \
-            -var="name=${{ env.BRANCH_NAME }}"
+            -var="branch_name=$BRANCH_NAME" \
+            -var="name=$BRANCH_NAME"
         working-directory: ./terraform
