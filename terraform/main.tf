@@ -25,3 +25,13 @@ module "service" {
   container_image    = var.container_image
   destroy_after_secs = var.destroy_after_secs
 }
+
+terraform {
+  backend "s3" {
+    bucket         = "my-tf-backup"
+    key            = "env/${var.branch_name}/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-lock-table"
+    encrypt        = true
+  }
+}
