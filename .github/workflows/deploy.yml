@@ -52,11 +52,12 @@ jobs:
           terraform plan \
             -var="branch_name=$BRANCH_NAME" \
             -var="name=$BRANCH_NAME" \
+            -var="github_token=${{ secrets.GITHUBTOKEN }}" \
             -out=tfplan
         working-directory: ./terraform
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="github_token=${{ secrets.GITHUBTOKEN }}" tfplan
+        run: terraform apply -auto-approve tfplan
         working-directory: ./terraform
 
   destroy:
