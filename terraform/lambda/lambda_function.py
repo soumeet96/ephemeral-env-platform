@@ -52,7 +52,7 @@ def lambda_handler(event, context):
 def trigger_destroy_workflow(owner, repo, token, branch_name):
     url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/remote-destroy.yml/dispatches"
     data = {
-        "ref": "main",
+        "ref": branch_name,
         "inputs": {
             "branch": branch_name
         }
