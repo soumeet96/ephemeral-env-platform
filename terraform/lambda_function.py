@@ -6,7 +6,7 @@ def lambda_handler(event, context):
     s3 = boto3.client('s3')
     bucket = os.environ['STATE_BUCKET']
     prefix = 'env/'
-    ttl_hours = int(os.environ.get('TTL_HOURS', '6'))
+    ttl_hours = float(os.environ.get('TTL_HOURS', '6'))
 
     print(f"Checking for expired state files in bucket: {bucket} with TTL: {ttl_hours} hours")
 
