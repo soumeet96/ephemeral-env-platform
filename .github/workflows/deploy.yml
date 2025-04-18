@@ -33,23 +33,22 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Terraform Init
-        run: |
-          BRANCH_NAME=$(echo "${GITHUB_REF##*/}")
-            terraform init \
-              -backend-config="bucket=my-tf-backup" \
-              -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
-              -backend-config="region=us-east-1" \
-              -backend-config="dynamodb_table=terraform-lock-table" \
-              -backend-config="encrypt=true"
-        working-directory: ./terraform
-
       - name: Set branch name
         run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
+      - name: Terraform Init
+        run: |
+          echo "Using branch: $BRANCH_NAME"
+          terraform init \
+            -backend-config="bucket=my-tf-backup" \
+            -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
+            -backend-config="region=us-east-1" \
+            -backend-config="dynamodb_table=terraform-lock-table" \
+            -backend-config="encrypt=true"
+        working-directory: ./terraform
+
       - name: Terraform Plan
         run: |
-          BRANCH_NAME=$(echo "${GITHUB_REF##*/}")
           terraform plan \
             -var="branch_name=$BRANCH_NAME" \
             -var="name=$BRANCH_NAME" \
@@ -81,22 +80,19 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Set Branch Name for Destroy
+      - name: Set branch name for destroy
         run: echo "BRANCH_NAME=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: |
           echo "Using branch: $BRANCH_NAME"
-            terraform init \
-              -backend-config="bucket=my-tf-backup" \
-              -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
-              -backend-config="region=us-east-1" \
-              -backend-config="dynamodb_table=terraform-lock-table" \
-              -backend-config="encrypt=true"
+          terraform init \
+            -backend-config="bucket=my-tf-backup" \
+            -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
+            -backend-config="region=us-east-1" \
+            -backend-config="dynamodb_table=terraform-lock-table" \
+            -backend-config="encrypt=true"
         working-directory: ./terraform
-
-#      - name: Set branch name from PR
-#        run: echo "BRANCH_NAME=$(echo "${{ github.head_ref }}")" >> $GITHUB_ENV
 
       - name: Terraform Destroy
         run: |
