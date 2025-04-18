@@ -34,13 +34,14 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Terraform Init
-        run: BRANCH_NAME=$(echo "${GITHUB_REF##*/}")
-          terraform init \
-            -backend-config="bucket=my-tf-backup" \
-            -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
-            -backend-config="region=us-east-1" \
-            -backend-config="dynamodb_table=terraform-lock-table" \
-            -backend-config="encrypt=true"
+        run: |
+          BRANCH_NAME=$(echo "${GITHUB_REF##*/}")
+            terraform init \
+              -backend-config="bucket=my-tf-backup" \
+              -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
+              -backend-config="region=us-east-1" \
+              -backend-config="dynamodb_table=terraform-lock-table" \
+              -backend-config="encrypt=true"
         working-directory: ./terraform
 
       - name: Set branch name
@@ -81,13 +82,14 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Terraform Init
-        run: BRANCH_NAME=$(echo "${GITHUB_REF##*/}")
-          terraform init \
-            -backend-config="bucket=my-tf-backup" \
-            -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
-            -backend-config="region=us-east-1" \
-            -backend-config="dynamodb_table=terraform-lock-table" \
-            -backend-config="encrypt=true"
+        run: |
+          BRANCH_NAME=$(echo "${GITHUB_REF##*/}")
+            terraform init \
+              -backend-config="bucket=my-tf-backup" \
+              -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
+              -backend-config="region=us-east-1" \
+              -backend-config="dynamodb_table=terraform-lock-table" \
+              -backend-config="encrypt=true"
         working-directory: ./terraform
 
       - name: Set branch name from PR
