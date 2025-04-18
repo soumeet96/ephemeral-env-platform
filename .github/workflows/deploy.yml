@@ -99,6 +99,6 @@ jobs:
         run: |
           terraform destroy -auto-approve \
             -var="branch_name=$BRANCH_NAME" \
-            -var="github_token=${{ secrets.GITHUBTOKEN }}"
+            -var="github_token=${{ secrets.GITHUBTOKEN }}" \
             -var="name=$BRANCH_NAME"
         working-directory: ./terraform
