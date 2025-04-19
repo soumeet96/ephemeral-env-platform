@@ -76,3 +76,4 @@ resource "aws_cloudwatch_event_target" "lambda_target" {
   rule = aws_cloudwatch_event_rule.every_hour.name
   arn  = aws_lambda_function.state_cleanup.arn
 }
+
