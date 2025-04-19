@@ -59,7 +59,7 @@ def restore_original_branch_name(sanitized_name):
 def trigger_destroy_workflow(owner, repo, token, branch_name_sanitized):
     original_branch = restore_original_branch_name(branch_name_sanitized)
 
-    url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/157046070/dispatches"
+    url = f"https://api.github.com/repos/soumeet96/ephemeral-env-platform/actions/workflows/157046070/dispatches"
     data = {
         "ref": "main",
         "inputs": {
