@@ -61,7 +61,7 @@ def trigger_destroy_workflow(owner, repo, token, branch_name_sanitized):
 
     url = f"https://api.github.com/repos/soumeet96/ephemeral-env-platform/actions/workflows/157046070/dispatches"
     data = {
-        "ref": "main",
+        "ref": original_branch,
         "inputs": {
             "branch": original_branch
         }
