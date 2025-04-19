@@ -55,5 +55,5 @@ jobs:
           terraform destroy -auto-approve \
             -var="branch_name=${{ github.event.inputs.branch }}" \
             -var="name=${{ github.event.inputs.branch }}" \
-            -var="github_token=${{ secrets.GITHUB_TOKEN }}
+            -var="github_token=${{ secrets.GITHUB_TOKEN }}"
         working-directory: ./terraform
