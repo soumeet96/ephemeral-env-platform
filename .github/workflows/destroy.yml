@@ -36,6 +36,7 @@ jobs:
         id: normalize
         run: |
           NORMALIZED_BRANCH="${{ github.event.inputs.branch }}"
+          # Replace any '/' with '-' to avoid invalid S3 paths
           NORMALIZED_BRANCH="${NORMALIZED_BRANCH//\//-}"
           echo "normalized_branch=$NORMALIZED_BRANCH" >> $GITHUB_ENV
 
@@ -43,7 +44,7 @@ jobs:
         run: |
           terraform init \
             -backend-config="bucket=my-tf-backup" \
-            -backend-config="key=env/${{ steps.normalize.outputs.normalized_branch }}/terraform.tfstate" \
+            -backend-config="key=env/${{ env.normalized_branch }}/terraform.tfstate" \
             -backend-config="region=${{ env.AWS_REGION }}" \
             -backend-config="dynamodb_table=terraform-lock-table" \
             -backend-config="encrypt=true"
