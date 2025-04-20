@@ -75,7 +75,7 @@ jobs:
                 \"type\": \"header\",
                 \"text\": {
                   \"type\": \"plain_text\",
-                  \"text\": \"🚀 Deployment Successful!\",
+                  \"text\": \"🚀 Deployment Successful!!\",
                   \"emoji\": true
                 }
               },
@@ -96,7 +96,7 @@ jobs:
                 \"type\": \"section\",
                 \"text\": {
                   \"type\": \"mrkdwn\",
-                  \"text\": \"🌐 *Preview URL:*\nhttps://${{ env.BRANCH_NAME }}.soumeet.store\"
+                  \"text\": \"🌐 *Preview URL:*\nhttp://${{ env.BRANCH_NAME }}.soumeet.store\"
                 }
               }
             ]
