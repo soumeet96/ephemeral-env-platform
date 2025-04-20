@@ -58,9 +58,9 @@ resource "aws_lambda_function" "state_cleanup" {
   timeout = 300
 }
 
-resource "aws_cloudwatch_event_rule" "every_hour" {
-  name        = "run-lambda-every-hour"
-  description = "Triggers Lambda function every hour"
+resource "aws_cloudwatch_event_rule" "every_minute" {
+  name        = "run-lambda-every-minute"
+  description = "Triggers Lambda function every minute"
   schedule_expression = "rate(1 minute)"
 }
 
