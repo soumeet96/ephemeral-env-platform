@@ -61,3 +61,32 @@ jobs:
             -var="name=${{ env.NORMALIZED_BRANCH }}" \
             -var="github_token=${{ secrets.GITHUB_TOKEN }}"
         working-directory: ./terraform
+
+      - name: Notify Slack - Environment Destroyed
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"blocks\": [
+              {
+                \"type\": \"header\",
+                \"text\": {
+                  \"type\": \"plain_text\",
+                  \"text\": \"💥 Environment Destroyed!\",
+                  \"emoji\": true
+                }
+              },
+              {
+                \"type\": \"section\",
+                \"fields\": [
+                  {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"*Branch:*\n${{ env.NORMALIZED_BRANCH }}\"
+                  },
+                  {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"*Status:*\nAuto-destroyed by TTL 🕒\"
+                  }
+                ]
+              }
+            ]
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}
