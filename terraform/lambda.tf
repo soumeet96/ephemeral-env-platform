@@ -59,9 +59,9 @@ resource "aws_lambda_function" "state_cleanup" {
 }
 
 resource "aws_cloudwatch_event_rule" "every_hour" {
-  name        = "run-lambda-every-hour"
-  description = "Triggers Lambda function every hour"
-  schedule_expression = "rate(1 hour)"
+  name        = "run-lambda-every-minute"
+  description = "Triggers Lambda function every minute"
+  schedule_expression = "rate(1 minute)"
 }
 
 resource "aws_lambda_permission" "allow_event_invoke" {
@@ -76,3 +76,4 @@ resource "aws_cloudwatch_event_target" "lambda_target" {
   rule = aws_cloudwatch_event_rule.every_hour.name
   arn  = aws_lambda_function.state_cleanup.arn
 }
+

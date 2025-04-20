@@ -11,6 +11,7 @@ on:
 env:
   AWS_REGION: us-east-1
   TF_VERSION: 1.10.5
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   destroy:
@@ -32,14 +33,19 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Set branch name
-        run: echo "BRANCH_NAME=${{ github.event.inputs.branch }}" >> $GITHUB_ENV
+      - name: Normalize branch name
+        id: normalize
+        run: |
+          RAW_BRANCH="${{ github.event.inputs.branch }}"
+          NORMALIZED_BRANCH="${RAW_BRANCH//\//-}"
+          echo "RAW_BRANCH=$RAW_BRANCH" >> $GITHUB_ENV
+          echo "NORMALIZED_BRANCH=$NORMALIZED_BRANCH" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: |
           terraform init \
             -backend-config="bucket=my-tf-backup" \
-            -backend-config="key=env/${{ github.event.inputs.branch }}/terraform.tfstate" \
+            -backend-config="key=env/${{ env.NORMALIZED_BRANCH }}/terraform.tfstate" \
             -backend-config="region=${{ env.AWS_REGION }}" \
             -backend-config="dynamodb_table=terraform-lock-table" \
             -backend-config="encrypt=true"
@@ -48,6 +54,7 @@ jobs:
       - name: Terraform Destroy
         run: |
           terraform destroy -auto-approve \
-            -var="branch_name=${{ github.event.inputs.branch }}" \
-            -var="name=${{ github.event.inputs.branch }}"
+            -var="branch_name=${{ env.NORMALIZED_BRANCH }}" \
+            -var="name=${{ env.NORMALIZED_BRANCH }}" \
+            -var="github_token=${{ secrets.GITHUB_TOKEN }}"
         working-directory: ./terraform
