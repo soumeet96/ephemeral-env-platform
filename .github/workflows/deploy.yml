@@ -17,7 +17,7 @@ jobs:
     name: Deploy Environment
     uses: ./.github/workflows/_deploy-template.yml
     with:
-      raw_branch: ${{ github.ref_name }}
+      branch: ${{ github.ref_name }}
     secrets: inherit
 
   destroy:
@@ -25,5 +25,5 @@ jobs:
     name: Destroy Environment
     uses: ./.github/workflows/_destroy-template.yml
     with:
-      raw_branch: ${{ github.event.pull_request.head.ref }}
+      branch: ${{ github.event.pull_request.head.ref }}
     secrets: inherit
