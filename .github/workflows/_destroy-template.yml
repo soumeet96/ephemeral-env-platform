@@ -1,17 +1,15 @@
-name: Remote Terraform Destroy
+name: Reusable Terraform Destroy Workflow
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       branch:
-        description: 'Branch name for the environment to destroy'
         required: true
         type: string
 
 env:
   AWS_REGION: us-east-1
   TF_VERSION: 1.10.5
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   destroy:
@@ -36,7 +34,7 @@ jobs:
       - name: Normalize branch name
         id: normalize
         run: |
-          RAW_BRANCH="${{ github.event.inputs.branch }}"
+          RAW_BRANCH="${{ inputs.branch }}"
           NORMALIZED_BRANCH="${RAW_BRANCH//\//-}"
           echo "RAW_BRANCH=$RAW_BRANCH" >> $GITHUB_ENV
           echo "NORMALIZED_BRANCH=$NORMALIZED_BRANCH" >> $GITHUB_ENV

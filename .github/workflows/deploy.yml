@@ -14,91 +14,16 @@ env:
 jobs:
   deploy:
     if: github.event_name == 'push'
-    name: Terraform Apply
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-
-      - name: Set branch name
-        run: echo "BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')" >> $GITHUB_ENV
-
-      - name: Terraform Init
-        run: |
-          echo "Using branch: $BRANCH_NAME"
-          terraform init \
-            -backend-config="bucket=my-tf-backup" \
-            -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
-            -backend-config="region=us-east-1" \
-            -backend-config="dynamodb_table=terraform-lock-table" \
-            -backend-config="encrypt=true"
-        working-directory: ./terraform
-
-      - name: Terraform Plan
-        run: |
-          terraform plan \
-            -var="branch_name=$BRANCH_NAME" \
-            -var="name=$BRANCH_NAME" \
-            -var="github_token=${{ secrets.GITHUBTOKEN }}" \
-            -out=tfplan
-        working-directory: ./terraform
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
-        working-directory: ./terraform
+    name: Deploy Environment
+    uses: ./.github/workflows/_deploy-template.yml
+    with:
+      raw_branch: ${{ github.ref_name }}
+    secrets: inherit
 
   destroy:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    name: Terraform Destroy
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: ${{ env.TF_VERSION }}
-
-      - name: Set branch name for destroy
-        run: echo "BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | tr '/' '-')" >> $GITHUB_ENV
-
-      - name: Terraform Init
-        run: |
-          echo "Using branch: $BRANCH_NAME"
-          terraform init \
-            -backend-config="bucket=my-tf-backup" \
-            -backend-config="key=env/$BRANCH_NAME/terraform.tfstate" \
-            -backend-config="region=us-east-1" \
-            -backend-config="dynamodb_table=terraform-lock-table" \
-            -backend-config="encrypt=true"
-        working-directory: ./terraform
-
-      - name: Terraform Destroy
-        run: |
-          terraform destroy -auto-approve \
-            -var="branch_name=$BRANCH_NAME" \
-            -var="github_token=${{ secrets.GITHUBTOKEN }}" \
-            -var="name=$BRANCH_NAME"
-        working-directory: ./terraform
+    name: Destroy Environment
+    uses: ./.github/workflows/_destroy-template.yml
+    with:
+      raw_branch: ${{ github.event.pull_request.head.ref }}
+    secrets: inherit
