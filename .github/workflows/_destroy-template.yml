@@ -56,3 +56,10 @@ jobs:
             -var="name=${{ env.NORMALIZED_BRANCH }}" \
             -var="github_token=${{ secrets.GITHUB_TOKEN }}"
         working-directory: ./terraform
+        
+      - name: Notify Slack - Environment Destroyed
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"text\": \"💥 *Environment Destroyed!* Ephemeral environment for branch \`${{ env.NORMALIZED_BRANCH }}\` has been cleaned up.\"
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}

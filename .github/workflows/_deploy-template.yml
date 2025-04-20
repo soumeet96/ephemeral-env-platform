@@ -65,3 +65,10 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
         working-directory: ./terraform
+        
+      - name: Notify Slack - Deployment Success
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"text\": \"🚀 *Deployment Successful!* Branch \`${{ env.NORMALIZED_BRANCH }}\` is live. Preview URL: https://${{ env.NORMALIZED_BRANCH }}.yourdomain.com\"
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}
