@@ -98,8 +98,8 @@ resource "aws_iam_role_policy_attachment" "manual_trigger_logging" {
 }
 
 resource "aws_lambda_function" "manual_trigger" {
-  function_name = "manual-trigger"
-  handler       = "manual_trigger_lambda.lambda_handler"
+  function_name = "github_trigger"
+  handler       = "github_trigger.lambda_handler"
   runtime       = "python3.8"
 
   filename      = "github_trigger.zip"
