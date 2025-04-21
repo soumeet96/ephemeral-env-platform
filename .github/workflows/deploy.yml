@@ -18,12 +18,20 @@ env:
   TF_VERSION: 1.10.5
 
 jobs:
-  deploy:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    name: Deploy Environment
+  deploy-on-push:
+    if: github.event_name == 'push'
+    name: Deploy on Push
     uses: ./.github/workflows/_deploy-template.yml
     with:
-      branch: ${{ github.event.inputs.branch || github.ref_name }}
+      branch: ${{ github.ref_name }}
+    secrets: inherit
+
+  deploy-on-dispatch:
+    if: github.event_name == 'workflow_dispatch'
+    name: Deploy on Manual Trigger
+    uses: ./.github/workflows/_deploy-template.yml
+    with:
+      branch: ${{ github.event.inputs.branch }}
     secrets: inherit
 
   destroy:
