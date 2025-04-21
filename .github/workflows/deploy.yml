@@ -6,6 +6,12 @@ on:
       - 'feature/**'
   pull_request:
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name to deploy'
+        required: true
+        type: string
 
 env:
   AWS_REGION: us-east-1
@@ -13,11 +19,11 @@ env:
 
 jobs:
   deploy:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     name: Deploy Environment
     uses: ./.github/workflows/_deploy-template.yml
     with:
-      branch: ${{ github.ref_name }}
+      branch: ${{ github.event.inputs.branch || github.ref_name }}
     secrets: inherit
 
   destroy:
