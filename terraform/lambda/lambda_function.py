@@ -13,7 +13,7 @@ def lambda_handler(event, context):
     github_token = os.environ['GITHUB_TOKEN']
     github_repo = os.environ['GITHUB_REPO']
     github_owner = os.environ['GITHUB_OWNER']
-    github_branch = os.environ.get('BRANCH_PREFIX', 'feature-update')  # optional fallback
+#    github_branch = os.environ.get('BRANCH_PREFIX', 'feature-update')  # optional fallback
 
     print(f"Checking for expired state files in bucket: {bucket} with TTL: {ttl_hours} hours")
 
