@@ -1,0 +1,92 @@
+name: Remote Terraform Destroy
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name for the environment to destroy'
+        required: true
+        type: string
+
+  repository_dispatch:
+    types: [trigger-destroy]
+
+env:
+  AWS_REGION: us-east-1
+  TF_VERSION: 1.10.5
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Normalize branch name
+        id: normalize
+        run: |
+          RAW_BRANCH="${{ github.event.inputs.branch || github.event.client_payload.branch }}"
+          NORMALIZED_BRANCH="${RAW_BRANCH//\//-}"
+          echo "RAW_BRANCH=$RAW_BRANCH" >> $GITHUB_ENV
+          echo "NORMALIZED_BRANCH=$NORMALIZED_BRANCH" >> $GITHUB_ENV
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=my-tf-backup" \
+            -backend-config="key=env/${{ env.NORMALIZED_BRANCH }}/terraform.tfstate" \
+            -backend-config="region=${{ env.AWS_REGION }}" \
+            -backend-config="dynamodb_table=terraform-lock-table" \
+            -backend-config="encrypt=true"
+        working-directory: ./terraform
+
+      - name: Terraform Destroy
+        run: |
+          terraform destroy -auto-approve \
+            -var="branch_name=${{ env.NORMALIZED_BRANCH }}" \
+            -var="name=${{ env.NORMALIZED_BRANCH }}" \
+            -var="github_token=${{ secrets.GITHUB_TOKEN }}"
+        working-directory: ./terraform
+
+      - name: Notify Slack - Environment Destroyed
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"blocks\": [
+              {
+                \"type\": \"header\",
+                \"text\": {
+                  \"type\": \"plain_text\",
+                  \"text\": \"💥 Environment Destroyed!\",
+                  \"emoji\": true
+                }
+              },
+              {
+                \"type\": \"section\",
+                \"fields\": [
+                  {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"*Branch:*\n${{ env.NORMALIZED_BRANCH }}\"
+                  },
+                  {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"*Status:*\nAuto-destroyed by TTL 🕒\"
+                  }
+                ]
+              }
+            ]
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}

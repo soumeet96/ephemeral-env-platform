@@ -65,3 +65,39 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
         working-directory: ./terraform
+
+      - name: Notify Slack - Deployment Success
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' --data "{
+            \"blocks\": [
+              {
+                \"type\": \"header\",
+                \"text\": {
+                  \"type\": \"plain_text\",
+                  \"text\": \"🚀 Deployment Successful!!\",
+                  \"emoji\": true
+                }
+              },
+              {
+                \"type\": \"section\",
+                \"fields\": [
+                  {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"*Branch:*\n${{ env.BRANCH_NAME }}\"
+                  },
+                  {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"*Environment:*\nLive Preview\"
+                  }
+                ]
+              },
+              {
+                \"type\": \"section\",
+                \"text\": {
+                  \"type\": \"mrkdwn\",
+                  \"text\": \"🌐 *Preview URL:*\nhttp://${{ env.BRANCH_NAME }}.soumeet.store\"
+                }
+              }
+            ]
+          }" ${{ secrets.SLACK_WEBHOOK_URL }}
