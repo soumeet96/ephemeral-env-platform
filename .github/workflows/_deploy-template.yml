@@ -94,7 +94,7 @@ jobs:
                   },
                   {
                     \"type\": \"mrkdwn\",
-                    \"text\": \"*Trigger API:*\n${{ steps.api_url.outputs.api_url }}?repo=soumeet96/ephemeral-env-platform&branch=${{ env.BRANCH_NAME }}|Click to Trigger Manually>\"
+                    \"text\": \"*Trigger API:*\n${{ steps.api_url.outputs.api_url }}?repo=soumeet96/ephemeral-env-platform&branch=${{ env.BRANCH_NAME }}\"
                     }
                   ]
                 },
