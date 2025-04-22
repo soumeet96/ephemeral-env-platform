@@ -66,6 +66,11 @@ jobs:
         run: terraform apply -auto-approve tfplan
         working-directory: ./terraform
 
+      - name: Get API Gateway URL
+        id: api_url
+        run: |
+          echo "api_url=$(terraform output -raw manual_trigger_api_url)" >> $GITHUB_OUTPUT
+
       - name: Notify Slack - Deployment Success
         if: success()
         run: |
@@ -88,10 +93,10 @@ jobs:
                   },
                   {
                     \"type\": \"mrkdwn\",
-                    \"text\": \"*Environment:*\nLive Preview\"
-                  }
-                ]
-              },
+                    \"text\": \"*Trigger API:*\n${{ steps.api_url.outputs.api_url }}\"
+                    }
+                  ]
+                },
               {
                 \"type\": \"section\",
                 \"text\": {
