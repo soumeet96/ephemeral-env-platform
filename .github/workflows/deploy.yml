@@ -20,11 +20,11 @@ env:
 
 jobs:
   deploy:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch
+    if: contains(fromJson('["push", "workflow_dispatch"]'), github.event_name)
     name: Deploy Environment
     uses: ./.github/workflows/_deploy-template.yml
     with:
-      branch: ${{ github.ref_name || github.event.inputs.branch }}
+      branch: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }}
     secrets: inherit
 
   destroy:
