@@ -146,8 +146,3 @@ resource "aws_lambda_permission" "allow_apigw" {
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.manual_trigger.execution_arn}/*/*"
 }
-
-output "manual_trigger_api_url" {
-  value       = "${aws_apigatewayv2_stage.manual_trigger.invoke_url}/trigger"
-  description = "The trigger URL for manual GitHub workflow deployments"
-}
