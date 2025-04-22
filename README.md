@@ -57,9 +57,10 @@ It is ideal for staging, QA testing, and fast feedback cycles — all without pe
                          |
                          v
        +-----------------------------------+
-       | Lambda TTL Destroy (CloudWatch)  |
+       | Lambda TTL Destroy (CloudWatch)   |
        +-----------------------------------+
 
+```
 ---
 
 ## 🚀 Deployment Triggers
@@ -131,6 +132,7 @@ Example notification:
 
 ## 📁 Repo Structure
 
+```
 .
 ├── Dockerfile               # Dockerfile for image building
 ├── terraform/               # Infrastructure as Code (ECS, VPC, S3, etc.)
@@ -184,6 +186,7 @@ Example notification:
 │   └──destroy.sh            # Script to trigger destroy
 └── README.md                # Project documentation
 
+```
 ---
 
 ## 🙌 Credits
