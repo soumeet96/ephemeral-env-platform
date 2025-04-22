@@ -95,7 +95,7 @@ jobs:
                 \"fields\": [
                   {
                     \"type\": \"mrkdwn\",
-                    \"text\": \"*Branch:*\n${{ env.BRANCH_NAME }}\"
+                    \"text\": \"*Branch:*\n${{ env.RAW_BRANCH }}\"
                   },
                   {
                     \"type\": \"mrkdwn\",
