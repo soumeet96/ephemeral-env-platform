@@ -41,7 +41,12 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Normalize branch name
-        run: echo "BRANCH_NAME=$(echo '${{ inputs.branch }}' | tr '/._' '-')" >> $GITHUB_ENV
+        id: normalize
+        run: |
+          RAW_BRANCH="${{ inputs.branch }}"
+          BRANCH_NAME="${RAW_BRANCH//\//-}"
+          echo "RAW_BRANCH=$RAW_BRANCH" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: |
@@ -94,7 +99,7 @@ jobs:
                   },
                   {
                     \"type\": \"mrkdwn\",
-                    \"text\": \"*Trigger API:*\n${{ steps.api_url.outputs.api_url }}?repo=soumeet96/ephemeral-env-platform&branch=${{ env.BRANCH_NAME }}\"
+                    \"text\": \"*Trigger API:*\n${{ steps.api_url.outputs.api_url }}?repo=soumeet96/ephemeral-env-platform&branch=${{ env.RAW_BRANCH }}\"
                     }
                   ]
                 },
