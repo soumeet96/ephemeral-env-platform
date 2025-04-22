@@ -6,6 +6,12 @@ on:
       - 'feature/**'
   pull_request:
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name for the environment to destroy'
+        required: true
+        type: string
 
 
 env:
