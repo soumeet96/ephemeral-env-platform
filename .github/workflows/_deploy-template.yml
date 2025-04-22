@@ -70,6 +70,7 @@ jobs:
         id: api_url
         run: |
           echo "api_url=$(terraform output -raw manual_trigger_api_url)" >> $GITHUB_OUTPUT
+        working-directory: ./terraform
 
       - name: Notify Slack - Deployment Success
         if: success()
