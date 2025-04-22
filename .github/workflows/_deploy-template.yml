@@ -44,7 +44,8 @@ jobs:
         id: normalize
         run: |
           RAW_BRANCH="${{ inputs.branch }}"
-          BRANCH_NAME="${RAW_BRANCH//\//-}"
+          ENCODED_BRANCH=$(echo "$RAW_BRANCH" | base64 | tr -d '=' | tr '/+' '_-')
+          BRANCH_NAME="$ENCODED_BRANCH"
           echo "RAW_BRANCH=$RAW_BRANCH" >> $GITHUB_ENV
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 

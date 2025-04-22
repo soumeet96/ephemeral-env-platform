@@ -50,11 +50,14 @@ def lambda_handler(event, context):
         raise
 
 # ✅ Restore the original branch name from sanitized format
-def restore_original_branch_name(sanitized_name):
-    if '-' in sanitized_name:
-        parts = sanitized_name.split('-', 1)
-        return '/'.join(parts)
-    return sanitized_name
+def restore_original_branch_name(encoded_name):
+    try:
+        padded = encoded_name + '=' * (-len(encoded_name) % 4)
+        decoded_bytes = base64.urlsafe_b64decode(padded.encode())
+        return decoded_bytes.decode()
+    except Exception as e:
+        print(f"Error decoding branch name: {encoded_name}, error: {e}")
+        return encoded_name
 
 def trigger_destroy_workflow(owner, repo, token, branch_name_sanitized):
     original_branch = restore_original_branch_name(branch_name_sanitized)
