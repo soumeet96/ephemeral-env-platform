@@ -75,7 +75,7 @@ jobs:
                 \"fields\": [
                   {
                     \"type\": \"mrkdwn\",
-                    \"text\": \"*Branch:*\n${{ env.NORMALIZED_BRANCH }}\"
+                    \"text\": \"*Branch:*\n${{ env.RAW_BRANCH }}\"
                   },
                   {
                     \"type\": \"mrkdwn\",

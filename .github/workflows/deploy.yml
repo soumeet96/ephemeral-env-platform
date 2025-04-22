@@ -6,6 +6,12 @@ on:
       - 'feature/**'
   pull_request:
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch name for the environment to destroy'
+        required: true
+        type: string
 
 
 env:
@@ -14,11 +20,11 @@ env:
 
 jobs:
   deploy:
-    if: github.event_name == 'push'
+    if: contains(fromJson('["push", "workflow_dispatch"]'), github.event_name)
     name: Deploy Environment
     uses: ./.github/workflows/_deploy-template.yml
     with:
-      branch: ${{ github.ref_name }}
+      branch: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.ref_name }}
     secrets: inherit
 
   destroy:

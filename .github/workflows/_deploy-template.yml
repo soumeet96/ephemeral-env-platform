@@ -41,7 +41,12 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
 
       - name: Normalize branch name
-        run: echo "BRANCH_NAME=$(echo '${{ inputs.branch }}' | tr '/._' '-')" >> $GITHUB_ENV
+        id: normalize
+        run: |
+          RAW_BRANCH="${{ inputs.branch }}"
+          BRANCH_NAME="${RAW_BRANCH//\//-}"
+          echo "RAW_BRANCH=$RAW_BRANCH" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Terraform Init
         run: |
@@ -66,6 +71,12 @@ jobs:
         run: terraform apply -auto-approve tfplan
         working-directory: ./terraform
 
+      - name: Get API Gateway URL
+        id: api_url
+        run: |
+          echo "api_url=$(terraform output -raw manual_trigger_api_url)" >> $GITHUB_OUTPUT
+        working-directory: ./terraform
+
       - name: Notify Slack - Deployment Success
         if: success()
         run: |
@@ -84,14 +95,14 @@ jobs:
                 \"fields\": [
                   {
                     \"type\": \"mrkdwn\",
-                    \"text\": \"*Branch:*\n${{ env.BRANCH_NAME }}\"
+                    \"text\": \"*Branch:*\n${{ env.RAW_BRANCH }}\"
                   },
                   {
                     \"type\": \"mrkdwn\",
-                    \"text\": \"*Environment:*\nLive Preview\"
-                  }
-                ]
-              },
+                    \"text\": \"*Trigger API:*\n${{ steps.api_url.outputs.api_url }}?repo=soumeet96/ephemeral-env-platform&branch=${{ env.RAW_BRANCH }}\"
+                    }
+                  ]
+                },
               {
                 \"type\": \"section\",
                 \"text\": {
