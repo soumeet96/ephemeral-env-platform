@@ -2,7 +2,7 @@ app_name = "go-project"
 
 branch_name = "feature-login"
 
-container_image = "637423232823.dkr.ecr.us-east-1.amazonaws.com/go-dev:v1"
+container_image = "637423232823.dkr.ecr.us-east-1.amazonaws.com/go-dev:v2"
 
 vpc_cidr = "10.0.0.0/16"
 

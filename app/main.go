@@ -11,7 +11,7 @@ func main() {
 	port := getPort()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "✅ Hello from ephemeral environment for branch: %s", os.Getenv("BRANCH_NAME"))
+		fmt.Fprintf(w, "✅ Hello from Soumeet, for branch: %s", os.Getenv("BRANCH_NAME"))
 	})
 
 	log.Printf("🚀 Server running on port %s", port)
